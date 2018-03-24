@@ -26,3 +26,5 @@ elif coeffs[1] + coeffs[2] > 1:
     print('Increasing returns to scale')
 else:
     print('Decreasing returns to scale')
+
+print('Elasticity of substitution for Cobb–Douglas production function is const = 1')
