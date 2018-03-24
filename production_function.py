@@ -50,7 +50,7 @@ print(long_solution.x)
 print("Long run profit", -pi(long_solution.x))
 
 
-def constraint1(x): # sqrt(x[0] * x[0] + x[1] * x[1]) <= 5000
+def constraint1(x):  # sqrt(x[0] * x[0] + x[1] * x[1]) <= 5000
     return 5000 - (x[0] * x[0] + x[1] * x[1]) ** 0.5
 
 
@@ -60,4 +60,33 @@ short_solution = minimize(pi, [1, 1], method='SLSQP', bounds=bounds1, constraint
 print(short_solution.x)
 print("Short run profit", -pi(short_solution.x))
 
+
+def price_func(x):
+    return -x / 830 + 8310/83
+
+
+def wL(x):
+    return 0.025 * x[1] - 20
+
+
+def wF(x):
+    return 0.025 * x[0] - 10
+
+
+def wM(x):
+    return (wF(x), wL(x))
+
+
+def monopoly_pi(x):
+    q = cobb_douglas(x, coeffs[0], coeffs[1], coeffs[2])
+    mw = wM(x)
+    return mw[0] * x[0] + mw[1] * x[1] - price_func(q) * q
+
+
+monopoly_solution = minimize(monopoly_pi, [1, 1], method='SLSQP', bounds=bounds1, constraints=[])
+print(monopoly_solution.x)
+print("Monopoly profit", -monopoly_pi(monopoly_solution.x))
+print("Monopoly price", price_func(cobb_douglas(monopoly_solution.x, coeffs[0], coeffs[1], coeffs[2])))
+print("Monopoly price of resources: F = {}, L = {}".format(wF(monopoly_solution.x), wL(monopoly_solution.x)))
+print("Volume of production", cobb_douglas(monopoly_solution.x, coeffs[0], coeffs[1], coeffs[2]))
 
