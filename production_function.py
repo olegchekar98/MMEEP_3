@@ -1,12 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
+from Settings import INF
+
+
+# CAPITAL
+F = [10600, 10550, 10630, 10790, 10860, 10380, 10630, 10600, 10800, 10740]
 
 # K
-K = [10600, 10550, 10630, 10790, 10860, 10380, 10630, 10600, 10800, 10740]
-
-# FUND
-F = [25071, 25064, 25226, 25461, 25935, 24700, 25015, 25018, 25626, 25580]
+K = [25071, 25064, 25226, 25461, 25935, 24700, 25015, 25018, 25626, 25580]
 
 # LABOR
 L = [5070, 5000, 5000, 5150, 5260, 4950, 5015, 5020, 5170, 5159]
@@ -28,3 +30,34 @@ else:
     print('Decreasing returns to scale')
 
 print('Elasticity of substitution for Cobb–Douglas production function is const = 1')
+
+
+price = 70
+w = [100, 100]
+
+
+def pi(x):
+    return w[0] * x[0] + w[1] * x[1] - price * cobb_douglas(x, coeffs[0], coeffs[1], coeffs[2])
+
+
+bounds1 = (
+    (0, INF),
+    (0, INF)
+)
+
+long_solution = minimize(pi, [1, 1], method='SLSQP', bounds=bounds1, constraints=[])
+print(long_solution.x)
+print("Long run profit", -pi(long_solution.x))
+
+
+def constraint1(x): # sqrt(x[0] * x[0] + x[1] * x[1]) <= 5000
+    return 5000 - (x[0] * x[0] + x[1] * x[1]) ** 0.5
+
+
+con1 = {'type': 'ineq', 'fun': constraint1}
+
+short_solution = minimize(pi, [1, 1], method='SLSQP', bounds=bounds1, constraints=[con1])
+print(short_solution.x)
+print("Short run profit", -pi(short_solution.x))
+
+
